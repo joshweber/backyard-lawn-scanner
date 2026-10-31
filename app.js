@@ -3,6 +3,7 @@ import { arSupported, startAR } from './ar.js';
 import { buildDxf } from './dxf-writer.js';
 import { LAYERS } from './layers.js';
 import { loadProject, saveProject, newProject, parseProject } from './storage.js';
+import { initSprinklers } from './sprinkler-ui.js';
 import {
   dist, polylineLength, polygonArea, bestFitScale, scaleShapes, centroidOf, parseLength,
 } from './geometry.js';
@@ -17,11 +18,18 @@ const view = new PlanView($('plan'), {
   onSelect: () => updateButtons(),
 });
 
-function changed() {
+let sprinklers = null;
+
+// Save and redraw. The sprinkler tab calls changed(false) after its own edits, which skips the
+// outline-specific updates (it has already refreshed its own coverage and parts list).
+function changed(outline = true) {
   saveProject(project);
-  renderRefs();
-  updateStats();
-  updateButtons();
+  if (outline) {
+    renderRefs();
+    updateStats();
+    updateButtons();
+    if (sprinklers) sprinklers.refresh();
+  }
   view.draw();
 }
 
@@ -80,7 +88,17 @@ function applyBestFitScale() {
     return { d: dist(p, q), m: r.m };
   });
   const k = bestFitScale(pairs);
-  scaleShapes(project.shapes, k, centroidOf(project.shapes));
+  const centre = centroidOf(project.shapes);
+  scaleShapes(project.shapes, k, centre);
+  // Sprinkler heads move with the lawn, but their radii are fixed by the nozzles. Re-run Auto layout
+  // if the correction was large.
+  for (const h of project.heads || []) {
+    h.x = centre.x + (h.x - centre.x) * k;
+    h.y = centre.y + (h.y - centre.y) * k;
+  }
+  if ((project.heads || []).length && Math.abs(k - 1) > 0.01) {
+    notice('The outline was rescaled by ' + ((k - 1) * 100).toFixed(1) + '%. Sprinkler heads moved with it, so re-run Auto layout on the Sprinklers tab.');
+  }
 }
 
 function renderRefs() {
@@ -210,8 +228,12 @@ function download(name, text, type) {
 const stamp = () => new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
 
 $('btn-dxf').onclick = () => {
-  if (!project.shapes.length) return alert('Nothing to export yet.');
-  const dxf = buildDxf(project, { units: $('units').value, edgeLabels: $('edge-labels').checked });
+  if (!project.shapes.length && !(project.heads || []).length) return alert('Nothing to export yet.');
+  const dxf = buildDxf(project, {
+    units: $('units').value,
+    edgeLabels: $('edge-labels').checked,
+    nozzles: sprinklers && sprinklers.catalog() ? sprinklers.catalog().byId : null,
+  });
   download(`lawn-${stamp()}.dxf`, dxf, 'application/dxf');
 };
 
@@ -243,6 +265,7 @@ $('btn-clear').onclick = () => {
 };
 
 // ---------- start ----------
+sprinklers = initSprinklers({ view, getProject: () => project, changed, download, stamp });
 renderRefs();
 updateStats();
 updateButtons();

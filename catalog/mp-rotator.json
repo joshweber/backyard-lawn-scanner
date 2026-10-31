@@ -1,0 +1,199 @@
+{
+  "catalog_reference": "00-RC-001-CA-Vol41-HunterCatalog-EM.pdf",
+  "product_line": "Hunter MP Rotator Series",
+  "manufacturer": "Hunter Industries",
+  "recommended_operating_pressure": {
+    "bar": 2.8,
+    "kpa": 280
+  },
+  "series": [
+    {
+      "series_name": "MP Rotator Standard",
+      "precipitation_rate_mm_hr": 10,
+      "description": "High-efficiency solution offering up to 30% water savings over traditional spray nozzles. Features matched precipitation.",
+      "models": [
+        {
+          "base_model": "MP-1000",
+          "radius_range_m": [2.5, 4.5],
+          "variants": [
+            {
+              "model_number": "MP-1000-90",
+              "arc": "90-210",
+              "color": "Maroon"
+            },
+            {
+              "model_number": "MP-1000-210",
+              "arc": "210-270",
+              "color": "Lt. Blue"
+            },
+            {
+              "model_number": "MP-1000-360",
+              "arc": "360",
+              "color": "Olive"
+            }
+          ]
+        },
+        {
+          "base_model": "MP-2000",
+          "radius_range_m": [4.0, 6.4],
+          "variants": [
+            {
+              "model_number": "MP-2000-90",
+              "arc": "90-210",
+              "color": "Black"
+            },
+            {
+              "model_number": "MP-2000-210",
+              "arc": "210-270",
+              "color": "Green"
+            },
+            {
+              "model_number": "MP-2000-360",
+              "arc": "360",
+              "color": "Red"
+            }
+          ]
+        },
+        {
+          "base_model": "MP-3000",
+          "radius_range_m": [6.7, 9.1],
+          "variants": [
+            {
+              "model_number": "MP-3000-90",
+              "arc": "90-210",
+              "color": "Blue"
+            },
+            {
+              "model_number": "MP-3000-210",
+              "arc": "210-270",
+              "color": "Yellow"
+            },
+            {
+              "model_number": "MP-3000-360",
+              "arc": "360",
+              "color": "Grey"
+            }
+          ]
+        },
+        {
+          "base_model": "MP-3500",
+          "radius_range_m": [9.4, 10.7],
+          "variants": [
+            {
+              "model_number": "MP-3500-90",
+              "arc": "90-210",
+              "color": "Light Brown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "series_name": "MP Rotator MP800",
+      "precipitation_rate_mm_hr": 20,
+      "description": "Higher precipitation rate designed for small spaces, spray retrofits, and heavier water application needs.",
+      "models": [
+        {
+          "base_model": "MP-800SR",
+          "radius_range_m": [1.8, 3.5],
+          "variants": [
+            {
+              "model_number": "MP-800SR-90",
+              "arc": "90-210",
+              "color": "Orange and Grey"
+            },
+            {
+              "model_number": "MP-800SR-360",
+              "arc": "360",
+              "color": "Lime Green and Grey"
+            }
+          ]
+        },
+        {
+          "base_model": "MP-815",
+          "radius_range_m": [2.5, 4.9],
+          "variants": [
+            {
+              "model_number": "MP-815-90",
+              "arc": "90-210",
+              "color": "Maroon and Grey"
+            },
+            {
+              "model_number": "MP-815-210",
+              "arc": "210-270",
+              "color": "Lt. Blue and Grey"
+            },
+            {
+              "model_number": "MP-815-360",
+              "arc": "360",
+              "color": "Olive and Grey"
+            }
+          ]
+        },
+        {
+          "base_model": "MP-820",
+          "radius_range_m": [4.6, 7.3],
+          "variants": [
+            {
+              "model_number": "MP-820-90",
+              "arc": "90-210",
+              "color": "Black and Grey"
+            },
+            {
+              "model_number": "MP-820-210",
+              "arc": "210-270",
+              "color": "Green and Grey"
+            },
+            {
+              "model_number": "MP-820-360",
+              "arc": "360",
+              "color": "Red and Grey"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "series_name": "MP Rotator Strips and Corners",
+      "precipitation_rate_mm_hr": null,
+      "description": "Designed for accurate coverage of narrow, rectangular, or tight corner strip areas.",
+      "models": [
+        {
+          "base_model": "MP Strips",
+          "radius_range_m": null,
+          "variants": [
+            {
+              "model_number": "MP-LCS-515",
+              "arc": "Left Corner Strip",
+              "dimensions_m": [1.5, 4.5],
+              "color": "Ivory"
+            },
+            {
+              "model_number": "MP-RCS-515",
+              "arc": "Right Corner Strip",
+              "dimensions_m": [1.5, 4.5],
+              "color": "Copper"
+            },
+            {
+              "model_number": "MP-SS-530",
+              "arc": "Side Strip",
+              "dimensions_m": [1.5, 9.1],
+              "color": "Brown"
+            }
+          ]
+        },
+        {
+          "base_model": "MP Corner",
+          "radius_range_m": [2.5, 4.5],
+          "variants": [
+            {
+              "model_number": "MP-CORNER",
+              "arc": "45-105",
+              "color": "Turquoise"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

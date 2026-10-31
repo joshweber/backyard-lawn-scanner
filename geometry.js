@@ -20,7 +20,7 @@ export function polygonArea(pts) {
   return Math.abs(a) / 2;
 }
 
-function distToSegment(p, a, b) {
+export function distToSegment(p, a, b) {
   const dx = b.x - a.x;
   const dy = b.y - a.y;
   const l2 = dx * dx + dy * dy;
@@ -166,6 +166,49 @@ export function tiltColour(deg) {
   }
   return hex(lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t));
 }
+
+// Signed polygon area: positive when the points run anticlockwise (y up).
+export function signedArea(pts) {
+  let a = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const p = pts[i];
+    const q = pts[(i + 1) % pts.length];
+    a += p.x * q.y - q.x * p.y;
+  }
+  return a / 2;
+}
+
+export function pointInPolygon(p, pts) {
+  let inside = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const a = pts[i];
+    const b = pts[j];
+    if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
+}
+
+// Nearest point on a polygon outline. Returns {x, y, dist, i, t}: segment i (pts[i] -> pts[i+1]) at fraction t.
+export function nearestOnPolygon(p, pts, closed = true) {
+  let best = null;
+  const n = closed ? pts.length : pts.length - 1;
+  for (let i = 0; i < n; i++) {
+    const a = pts[i];
+    const b = pts[(i + 1) % pts.length];
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const l2 = dx * dx + dy * dy;
+    let t = l2 === 0 ? 0 : ((p.x - a.x) * dx + (p.y - a.y) * dy) / l2;
+    t = Math.max(0, Math.min(1, t));
+    const q = { x: a.x + t * dx, y: a.y + t * dy };
+    const d = dist(p, q);
+    if (!best || d < best.dist) best = { x: q.x, y: q.y, dist: d, i, t };
+  }
+  return best;
+}
+
+// Angle in degrees wrapped to [0, 360).
+export const normAngle = (deg) => ((deg % 360) + 360) % 360;
 
 // Parse "11.02", "11,02 m", "1102 cm", "36 ft", "432 in", "11020mm" into metres. Returns null if invalid.
 export function parseLength(text) {

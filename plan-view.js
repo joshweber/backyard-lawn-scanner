@@ -13,7 +13,10 @@ export class PlanView {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.hooks = hooks;
-    this.mode = 'edit'; // 'edit' | 'pick'
+    this.mode = 'edit'; // 'edit' | 'pick' | 'addhead'
+    this.tab = 'outline'; // 'outline' | 'sprinklers'
+    this.selectedHead = null; // head id
+    this.coverage = null; // result of computeCoverage(), drawn under the heads
     this.selected = null;
     this.pickBuffer = [];
     this.scale = 30; // px per metre
@@ -86,6 +89,32 @@ export class PlanView {
     return best;
   }
 
+  findHead(sx, sy) {
+    let best = null;
+    let bestD = HANDLE_PX + 4;
+    for (const h of this.hooks.getProject().heads || []) {
+      const q = this.toScreen(h);
+      const d = Math.hypot(q.x - sx, q.y - sy);
+      if (d <= bestD) { bestD = d; best = { head: h.id }; }
+    }
+    return best;
+  }
+
+  setTab(tab) {
+    this.tab = tab;
+    this.mode = 'edit';
+    this.pickBuffer = [];
+    this.selected = null;
+    this.selectedHead = null;
+    this.draw();
+  }
+
+  setSelectedHead(id) {
+    this.selectedHead = id;
+    this.hooks.onSelectHead && this.hooks.onSelectHead(id);
+    this.draw();
+  }
+
   setSelected(sel) {
     this.selected = sel;
     this.hooks.onSelect && this.hooks.onSelect(sel);
@@ -120,7 +149,7 @@ export class PlanView {
         return;
       }
       const p = pos(e);
-      const hit = this.findHandle(p.x, p.y);
+      const hit = this.tab === 'sprinklers' ? this.findHead(p.x, p.y) : this.findHandle(p.x, p.y);
       this.gesture = { type: hit ? 'handle' : 'pan', hit, start: p, last: p, moved: false };
     });
 
@@ -140,7 +169,19 @@ export class PlanView {
       if (this.pointers.size > 1) return;
       if (!g.moved && Math.hypot(p.x - g.start.x, p.y - g.start.y) > 6) g.moved = true;
       if (!g.moved) return;
-      if (g.type === 'handle' && this.mode === 'edit') {
+      if (g.type === 'handle' && g.hit.head !== undefined) {
+        const h = (this.hooks.getProject().heads || []).find((x) => x.id === g.hit.head);
+        if (h && this.mode === 'edit') {
+          const w = this.toWorld(p.x, p.y);
+          h.x = w.x;
+          h.y = w.y;
+          this.draw();
+        } else if (this.mode !== 'edit') {
+          this.ox += p.x - g.last.x;
+          this.oy += p.y - g.last.y;
+          this.draw();
+        }
+      } else if (g.type === 'handle' && this.mode === 'edit') {
         const s = this.findShape(g.hit.id);
         if (s) {
           const w = this.toWorld(p.x, p.y);
@@ -166,13 +207,24 @@ export class PlanView {
       }
       this.gesture = null;
       if (e.type === 'pointercancel') return;
-      if (g.type === 'handle') {
+      if (g.type === 'handle' && g.hit.head !== undefined) {
+        if (g.moved && this.mode === 'edit') {
+          this.selectedHead = g.hit.head;
+          this.hooks.onHeadMoved(g.hit.head);
+        } else if (!g.moved) {
+          if (this.mode === 'addhead') this.hooks.onAddHead(this.toWorld(g.start.x, g.start.y));
+          else this.setSelectedHead(g.hit.head);
+        }
+      } else if (g.type === 'handle') {
         if (g.moved && this.mode === 'edit') {
           this.hooks.onChange();
         } else if (!g.moved) {
           if (this.mode === 'pick') this._pick(g.hit);
           else this.setSelected(g.hit);
         }
+      } else if (!g.moved && this.tab === 'sprinklers') {
+        if (this.mode === 'addhead') this.hooks.onAddHead(this.toWorld(g.start.x, g.start.y));
+        else this.setSelectedHead(null);
       } else if (!g.moved && this.mode === 'edit') {
         this.setSelected(null);
       }
@@ -255,7 +307,7 @@ export class PlanView {
         ctx.stroke();
       }
 
-      const showAll = s.points.length <= 60;
+      const showAll = s.points.length <= 60 && this.tab === 'outline';
       s.points.forEach((p, i) => {
         const isSel = this.selected && this.selected.id === s.id && this.selected.i === i;
         const isPick = this.pickBuffer.some((h) => h.id === s.id && h.i === i);
@@ -267,6 +319,8 @@ export class PlanView {
         ctx.fill();
       });
     }
+
+    this._drawHeads(project);
 
     for (const r of project.refs) {
       const a = this._ptOf(r.a);
@@ -288,6 +342,67 @@ export class PlanView {
 
     if (this.mode === 'pick') {
       this._label(`Tap point ${this.pickBuffer.length + 1} of 2 for tape reference`, this.cssW / 2, 18, '#ff9800');
+    }
+    if (this.mode === 'addhead') {
+      this._label('Tap the plan to place a head. Near the lawn edge it snaps on and sets its arc.', this.cssW / 2, 18, '#4fc3f7');
+    }
+  }
+
+  _drawHeads(project) {
+    if (this.tab !== 'sprinklers') return;
+    const ctx = this.ctx;
+
+    // coverage overlay: red = dry, yellow = one head, green = overlap
+    const cov = this.coverage;
+    if (cov && cov.samples.length) {
+      const px = Math.max(2, cov.step * this.scale);
+      ctx.save();
+      ctx.globalAlpha = 0.45;
+      for (let i = 0; i < cov.samples.length; i++) {
+        const c = cov.counts[i];
+        ctx.fillStyle = c === 0 ? '#e53935' : c === 1 ? '#fdd835' : '#43a047';
+        const q = this.toScreen(cov.samples[i]);
+        ctx.fillRect(q.x - px / 2, q.y - px / 2, px + 0.5, px + 0.5);
+      }
+      ctx.restore();
+    }
+
+    const heads = project.heads || [];
+    const sector = (h, fill) => {
+      const q = this.toScreen(h);
+      const r = h.radius * this.scale;
+      ctx.beginPath();
+      if (h.sweep >= 359.5) {
+        ctx.arc(q.x, q.y, r, 0, Math.PI * 2);
+      } else {
+        // canvas y points down, so plan angles are negated
+        const a0 = (-h.start * Math.PI) / 180;
+        const a1 = (-(h.start + h.sweep) * Math.PI) / 180;
+        ctx.moveTo(q.x, q.y);
+        ctx.arc(q.x, q.y, r, a0, a1, true);
+        ctx.closePath();
+      }
+      if (fill) ctx.fill();
+      ctx.stroke();
+    };
+
+    for (const h of heads) {
+      const sel = h.id === this.selectedHead;
+      ctx.lineWidth = sel ? 2.5 : 1.2;
+      ctx.strokeStyle = sel ? '#ffffff' : h.nozzleId ? '#4fc3f7' : '#ff5252';
+      ctx.fillStyle = sel ? 'rgba(255,255,255,0.12)' : 'rgba(79,195,247,0.07)';
+      sector(h, true);
+    }
+    for (const h of heads) {
+      const q = this.toScreen(h);
+      const sel = h.id === this.selectedHead;
+      ctx.beginPath();
+      ctx.arc(q.x, q.y, sel ? 8 : 6, 0, Math.PI * 2);
+      ctx.fillStyle = h.nozzleId ? (h.warn ? '#ff9800' : '#00b0ff') : '#ff5252';
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = sel ? '#ffffff' : '#10151b';
+      ctx.stroke();
     }
   }
 

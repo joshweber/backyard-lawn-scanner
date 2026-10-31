@@ -1,0 +1,151 @@
+{
+  "catalog_reference": "00-RC-001-CA-Vol41-HunterCatalog-EM_2.pdf",
+  "product_line": "Hunter PGP Ultra Series",
+  "manufacturer": "Hunter Industries",
+  "general_specifications": {
+    "arc_adjustment": "50 to 360 degrees",
+    "inlet_size": "3/4 inch",
+    "exposed_diameter_cm": 4.5,
+    "precipitation_rate_mm_hr": 10,
+    "nozzle_trajectory": {
+      "standard": "25 degrees",
+      "low_angle": "13 degrees"
+    },
+    "key_features": [
+      "Automatic arc return",
+      "Non-strippable drive mechanism",
+      "Part- and full-circle in one model",
+      "Headed and slotted setscrew",
+      "QuickCheck Arc Mechanism"
+    ]
+  },
+  "series": [
+    {
+      "series_name": "PGP Ultra (Standard)",
+      "description": "Standard PGP Ultra rotors with powerful features and 34 nozzle choices.",
+      "radius_range_m": [4.9, 14.0],
+      "flow_range": {
+        "m3_hr": [0.07, 3.23],
+        "l_min": [1.2, 53.8]
+      },
+      "pressure_specifications": {
+        "recommended_range_bar": [1.7, 4.5],
+        "recommended_range_kpa": [170, 450],
+        "operating_range_bar": [1.4, 7.0],
+        "operating_range_kpa": [140, 700]
+      },
+      "models": [
+        {
+          "model_number": "PGP-00",
+          "type": "Shrub",
+          "overall_height_cm": 19,
+          "pop_up_height_cm": 0
+        },
+        {
+          "model_number": "PGP-04",
+          "type": "10 cm pop-up",
+          "overall_height_cm": 19,
+          "pop_up_height_cm": 10
+        },
+        {
+          "model_number": "PGP-06",
+          "type": "15 cm pop-up",
+          "overall_height_cm": 25,
+          "pop_up_height_cm": 15
+        },
+        {
+          "model_number": "PGP-12",
+          "type": "30 cm pop-up",
+          "overall_height_cm": 43,
+          "pop_up_height_cm": 30
+        }
+      ],
+      "options": [
+        {"code": "CV", "description": "Drain Check Valve (up to 3m elevation)"},
+        {"code": "CV-R", "description": "Drain Check Valve and Reclaimed Water ID"}
+      ]
+    },
+    {
+      "series_name": "PGP Ultra PRB (Pressure-Regulated Body)",
+      "description": "Pressure-regulated body reduces high incoming pressure to 3.1 bar (310 kPa) to increase nozzle efficiency.",
+      "radius_range_m": [4.9, 14.0],
+      "flow_range": {
+        "m3_hr": [0.07, 2.22],
+        "l_min": [1.2, 36.0]
+      },
+      "pressure_specifications": {
+        "nozzle_discharge_pressure_bar": 3.1,
+        "nozzle_discharge_pressure_kpa": 310,
+        "recommended_range_bar": [4.1, 7.0],
+        "recommended_range_kpa": [410, 700],
+        "operating_range_bar": [2.4, 7.0],
+        "operating_range_kpa": [240, 700]
+      },
+      "models": [
+        {
+          "model_number": "PGP-00-PRB",
+          "type": "Riser mount",
+          "overall_height_cm": 22,
+          "pop_up_height_cm": 0
+        },
+        {
+          "model_number": "PGP-04-PRB",
+          "type": "10 cm pop-up",
+          "overall_height_cm": 22,
+          "pop_up_height_cm": 10
+        }
+      ],
+      "options": [
+        {"code": "CV", "description": "Drain Check Valve (PGP-04 only)"},
+        {"code": "CV-R", "description": "Drain Check Valve and Reclaimed Water ID"}
+      ]
+    }
+  ],
+  "nozzle_racks": [
+    {
+      "rack_name": "Blue Standard",
+      "trajectory": "25 degrees",
+      "nozzles": ["1.5", "2.0", "2.5", "3.0", "4.0", "5.0", "6.0", "8.0"],
+      "radius_range_m": [8.8, 14.0]
+    },
+    {
+      "rack_name": "Grey Low-Angle",
+      "trajectory": "13 degrees",
+      "nozzles": ["2.0 LA", "2.5 LA", "3.5 LA", "4.5 LA"],
+      "radius_range_m": [7.3, 11.3]
+    },
+    {
+      "rack_name": "Black Short-Radius",
+      "trajectory": "Varies (approx 14-22 degrees)",
+      "nozzles": ["0.50 SR", "1.0 SR", "2.0 SR", "0.75 SR", "1.5 SR", "3.0 SR"],
+      "radius_range_m": [4.9, 7.6]
+    },
+    {
+      "rack_name": "Dark Green High-Flow",
+      "trajectory": "25 degrees",
+      "nozzles": ["10", "13"],
+      "radius_range_m": [10.7, 14.0]
+    },
+    {
+      "rack_name": "MPR-25",
+      "trajectory": "25 degrees",
+      "description": "Matched Precipitation Nozzles (Red)",
+      "nozzles": ["Q (90)", "T (120)", "H (180)", "F (360)"],
+      "radius_range_m": [7.0, 7.6]
+    },
+    {
+      "rack_name": "MPR-30",
+      "trajectory": "25 degrees",
+      "description": "Matched Precipitation Nozzles (Light Green)",
+      "nozzles": ["Q (90)", "T (120)", "H (180)", "F (360)"],
+      "radius_range_m": [8.8, 9.1]
+    },
+    {
+      "rack_name": "MPR-35",
+      "trajectory": "25 degrees",
+      "description": "Matched Precipitation Nozzles (Tan)",
+      "nozzles": ["Q (90)", "T (120)", "H (180)", "F (360)"],
+      "radius_range_m": [9.8, 10.7]
+    }
+  ]
+}

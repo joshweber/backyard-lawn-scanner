@@ -50,9 +50,24 @@ Curves are exported as dense polylines (`PEDIT` > Spline/Fit in AutoCAD if you w
 
 **Save project** / **Load project** keep a JSON copy. The project is also autosaved in the phone browser.
 
+## Sprinkler layout (Sprinklers tab)
+
+Scan and close the lawn outline first. Then open the **Sprinklers** tab.
+
+1. Pick a **Range** (Hunter MP Rotator Standard, MP Rotator MP800 or PGP Ultra) and a **Model**. `Auto` tries every model in the range and keeps the one that covers the lawn with the fewest heads and the least spray wasted outside it.
+2. **Auto layout** puts heads in the corners (90 degree arcs, or 270 for inside corners), along the edges (180 degrees) and, if the lawn is wide, in the middle. The **Spacing** slider sets how close to the nozzle's maximum radius the heads are spaced.
+3. **Coverage** colours the lawn: red = dry, yellow = one head, green = overlapping heads.
+4. **Edit by hand**: tap a head to change its nozzle, radius, arc or direction, or drag it. **Add head** places a new one (near the lawn edge it snaps on and sets its own arc). Heads you add or change are kept when you re-run Auto layout.
+5. The **parts list** counts nozzles by model and colour and shows the run time for the weekly water depth you enter. **Parts list CSV** downloads it.
+6. **Download DXF** now also writes `SPRINKLER_HEADS`, `COVERAGE` (arcs and circles) and `HEAD_LABELS` layers.
+
+The catalog data lives in `catalog/mp-rotator.json` and `catalog/pgp-ultra.json`. Edit those files (for example to add flow tables) without touching the code. Strip nozzles are in the catalog but are not placed automatically. Hunter's PDF catalog is deliberately not in the repo (`*.pdf` is git-ignored).
+
+This is a starting layout, not an installation design. Check spacing and pressure against the manufacturer's spray charts. Zones and flow checks are not included yet, because the catalog data has no per-nozzle flow.
+
 ## Tests
 
-`npm test` runs the Node tests for geometry, loop closure, scaling and the DXF writer. AR capture can only be tested on a phone.
+`npm test` runs the Node tests for geometry, loop closure, scaling, tilt, the sprinkler catalog, layout, coverage, parts list and the DXF writer. AR capture can only be tested on a phone.
 
 ## Limitations
 

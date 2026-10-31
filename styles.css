@@ -21,6 +21,19 @@ button.active { background: #ff9800; color: #000; }
 #refs .ref button { padding: 2px 8px; font-size: 12px; }
 #refs .summary { color: #9fb0c0; }
 
+#tabs { display: flex; gap: 6px; padding: 0 12px 8px; }
+#tabs .tab { flex: 1; }
+#tabs .tab.active { background: #1565c0; border-color: #1565c0; }
+#sprinkler-panel { padding: 8px 12px; display: flex; flex-direction: column; gap: 8px; background: #161d25; max-height: 45vh; overflow-y: auto; }
+#sprinkler-panel input[type=number] { width: 80px; font: inherit; font-size: 14px; padding: 6px; border-radius: 6px; border: 1px solid #2d3a47; background: #1f2a35; color: #e6edf3; }
+#sprinkler-panel .notice { margin: 0; }
+.card { background: #1b2530; border: 1px solid #2d3a47; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+.summary { font-size: 13px; color: #9fb0c0; }
+#sp-parts { font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+#sp-parts .part { background: #1f2a35; padding: 4px 8px; border-radius: 6px; }
+#sp-parts .warn { color: #ffd98a; }
+#sp-stats { flex: 1; min-width: 160px; }
+
 #xr-canvas-host { position: fixed; inset: 0; pointer-events: none; }
 #ar-overlay { position: fixed; inset: 0; pointer-events: none; font-size: 14px; }
 #ar-overlay button, #ar-overlay select { pointer-events: auto; background: rgba(16,21,27,0.85); }

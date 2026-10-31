@@ -1,5 +1,5 @@
 // Minimal ASCII DXF (AutoCAD R2000 / AC1015) writer. No DOM, so it can be tested in Node.
-import { LAYERS, EDGE_LABEL_LAYER } from './layers.js';
+import { LAYERS, EDGE_LABEL_LAYER, HEAD_LAYERS } from './layers.js';
 import { dist } from './geometry.js';
 
 const UNITS = {
@@ -25,7 +25,16 @@ export function buildDxf(project, opts = {}) {
   for (const s of project.shapes) if (LAYERS[s.layer] && s.points.length) used.add(s.layer);
   const layerNames = Object.keys(LAYERS).filter((n) => used.has(n));
   if (labels) layerNames.push(EDGE_LABEL_LAYER.name);
-  const aciOf = (n) => (n === EDGE_LABEL_LAYER.name ? EDGE_LABEL_LAYER.aci : LAYERS[n].aci);
+  const heads = Array.isArray(project.heads) ? project.heads : [];
+  const headLabel = (h) => {
+    const n = opts.nozzles && h.nozzleId ? opts.nozzles.get(h.nozzleId) : null;
+    return `${n ? n.label : h.nozzleId || 'NO NOZZLE'} ${(+h.radius).toFixed(1)}m ${Math.round(h.sweep)}deg`;
+  };
+  if (heads.length) layerNames.push('SPRINKLER_HEADS', 'COVERAGE', 'HEAD_LABELS');
+  const aciOf = (n) => {
+    if (n === EDGE_LABEL_LAYER.name) return EDGE_LABEL_LAYER.aci;
+    return HEAD_LAYERS[n] ? HEAD_LAYERS[n].aci : LAYERS[n].aci;
+  };
 
   // HEADER
   add(0, 'SECTION');
@@ -172,6 +181,51 @@ export function buildDxf(project, opts = {}) {
       add(30, 0);
       add(40, sc(0.1));
     }
+  }
+
+  for (const h of heads) {
+    // head symbol: a point and a small ring
+    header('POINT', 'SPRINKLER_HEADS', 'AcDbPoint');
+    add(10, sc(h.x));
+    add(20, sc(h.y));
+    add(30, 0);
+    header('CIRCLE', 'SPRINKLER_HEADS', 'AcDbCircle');
+    add(10, sc(h.x));
+    add(20, sc(h.y));
+    add(30, 0);
+    add(40, sc(0.08));
+
+    // spray area: DXF arcs run anticlockwise from the start angle, the same as the plan view
+    if (h.sweep >= 359.5) {
+      header('CIRCLE', 'COVERAGE', 'AcDbCircle');
+      add(10, sc(h.x));
+      add(20, sc(h.y));
+      add(30, 0);
+      add(40, sc(h.radius));
+    } else {
+      const a0 = ((h.start % 360) + 360) % 360;
+      const a1 = (a0 + h.sweep) % 360;
+      header('ARC', 'COVERAGE', 'AcDbCircle');
+      add(10, sc(h.x));
+      add(20, sc(h.y));
+      add(30, 0);
+      add(40, sc(h.radius));
+      add(100, 'AcDbArc');
+      add(50, num(a0));
+      add(51, num(a1));
+      // close the sector with its two radii
+      for (const a of [a0, a1]) {
+        const r = (a * Math.PI) / 180;
+        header('LINE', 'COVERAGE', 'AcDbLine');
+        add(10, sc(h.x));
+        add(20, sc(h.y));
+        add(30, 0);
+        add(11, sc(h.x + h.radius * Math.cos(r)));
+        add(21, sc(h.y + h.radius * Math.sin(r)));
+        add(31, 0);
+      }
+    }
+    textAt('HEAD_LABELS', h.x + 0.15, h.y + 0.15, 0.12, 0, headLabel(h));
   }
 
   add(0, 'ENDSEC');

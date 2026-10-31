@@ -19,6 +19,11 @@
 
     <div id="notice" class="notice"></div>
 
+    <div id="tabs">
+      <button id="tab-outline" class="tab active">Outline</button>
+      <button id="tab-sprinklers" class="tab">Sprinklers</button>
+    </div>
+
     <div id="toolbar">
       <button id="btn-scan" class="primary">Scan with AR</button>
       <button id="btn-fit">Fit view</button>
@@ -28,6 +33,46 @@
     </div>
 
     <canvas id="plan"></canvas>
+
+    <section id="sprinkler-panel" style="display:none">
+      <div id="sp-msg" class="notice"></div>
+      <div class="row">
+        <label>Range <select id="sp-family"></select></label>
+        <label>Model <select id="sp-base"></select></label>
+        <label>Spacing <input type="range" id="sp-spacing" min="70" max="100" step="1" value="95"> <span id="sp-spacing-val">95%</span></label>
+      </div>
+      <div class="row">
+        <button id="sp-auto" class="primary">Auto layout</button>
+        <button id="sp-add">Add head</button>
+        <label class="check"><input type="checkbox" id="sp-cov" checked> Coverage</label>
+        <span id="sp-stats" class="summary"></span>
+      </div>
+      <div id="sp-edit" class="card" style="display:none">
+        <div class="row">
+          <strong id="sp-edit-title"></strong>
+          <button id="sp-del" class="danger">Delete head</button>
+        </div>
+        <div class="row">
+          <label>Nozzle <select id="sp-nozzle"></select></label>
+        </div>
+        <div class="row">
+          <label>Radius (m) <input type="number" id="sp-radius" step="0.1" min="0.5" max="30"></label>
+          <label>Arc (deg) <input type="number" id="sp-sweep" step="5" min="5" max="360"></label>
+          <label>Direction (deg) <input type="number" id="sp-start" step="5"></label>
+        </div>
+        <div class="row">
+          <button id="sp-rot-l">Rotate left 15</button>
+          <button id="sp-rot-r">Rotate right 15</button>
+          <button id="sp-snap">Snap to lawn edge</button>
+        </div>
+        <div id="sp-edit-note" class="summary"></div>
+      </div>
+      <div id="sp-parts"></div>
+      <div class="row">
+        <label>Water per week (mm) <input type="number" id="sp-depth" value="25" min="1" max="200" step="1"></label>
+        <button id="sp-csv">Parts list CSV</button>
+      </div>
+    </section>
 
     <section id="panel">
       <div id="refs"></div>

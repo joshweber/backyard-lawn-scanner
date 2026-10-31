@@ -11,3 +11,10 @@ export const LAYERS = {
 export const LAYER_ORDER = Object.keys(LAYERS);
 
 export const EDGE_LABEL_LAYER = { name: 'EDGE_LENGTHS', aci: 7 };
+
+// Sprinkler layers. Written to the DXF only; not offered as AR capture layers.
+export const HEAD_LAYERS = {
+  SPRINKLER_HEADS: { aci: 6 },
+  COVERAGE: { aci: 4 },
+  HEAD_LABELS: { aci: 7 },
+};
