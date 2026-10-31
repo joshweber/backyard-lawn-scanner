@@ -1,0 +1,33 @@
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: #10151b; color: #e6edf3; font-family: system-ui, sans-serif; }
+#app { display: flex; flex-direction: column; height: 100%; }
+header { display: flex; align-items: baseline; gap: 12px; padding: 8px 12px; }
+header h1 { font-size: 18px; margin: 0; }
+#stats { font-size: 13px; color: #9fb0c0; }
+.notice { display: none; margin: 0 12px 6px; padding: 8px 10px; border-radius: 6px; background: #3a2f12; color: #ffd98a; font-size: 13px; }
+#toolbar { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 8px; }
+#plan { flex: 1; width: 100%; min-height: 200px; touch-action: none; display: block; }
+#panel { padding: 8px 12px 12px; display: flex; flex-direction: column; gap: 8px; background: #161d25; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+label { font-size: 13px; color: #9fb0c0; display: flex; gap: 6px; align-items: center; }
+label.check { color: #e6edf3; }
+button, select { font: inherit; font-size: 14px; padding: 8px 12px; border-radius: 8px; border: 1px solid #2d3a47; background: #1f2a35; color: #e6edf3; }
+button:disabled { opacity: 0.4; }
+button.primary { background: #2e7d32; border-color: #2e7d32; }
+button.danger { background: #5a1f1f; border-color: #7a2a2a; }
+button.active { background: #ff9800; color: #000; }
+#refs { font-size: 13px; display: flex; flex-direction: column; gap: 4px; }
+#refs .ref { display: flex; justify-content: space-between; align-items: center; gap: 8px; background: #1f2a35; padding: 4px 8px; border-radius: 6px; }
+#refs .ref button { padding: 2px 8px; font-size: 12px; }
+#refs .summary { color: #9fb0c0; }
+
+#xr-canvas-host { position: fixed; inset: 0; pointer-events: none; }
+#ar-overlay { position: fixed; inset: 0; pointer-events: none; font-size: 14px; }
+#ar-overlay button, #ar-overlay select { pointer-events: auto; background: rgba(16,21,27,0.85); }
+#ar-top { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 8px; justify-content: space-between; }
+#ar-top select { flex: 1; min-width: 0; }
+#ar-info { position: absolute; left: 10px; right: 10px; bottom: 96px; padding: 6px 10px; border-radius: 8px; background: rgba(16,21,27,0.8); text-align: center; font-size: 13px; }
+#ar-toast { position: absolute; left: 10px; right: 10px; top: 70px; padding: 8px 10px; border-radius: 8px; background: rgba(30,111,224,0.9); text-align: center; opacity: 0; transition: opacity 0.3s; }
+#ar-bottom { position: absolute; left: 10px; right: 10px; bottom: 24px; display: flex; gap: 8px; align-items: stretch; }
+#ar-bottom button { flex: 1; padding: 14px 6px; }
+#ar-bottom button.big { flex: 2; background: #2e7d32; border-color: #2e7d32; font-weight: 600; }

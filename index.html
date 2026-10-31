@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#10151b">
+  <title>Backyard Lawn Scanner</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="importmap">
+    { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>Lawn Scanner</h1>
+      <span id="stats"></span>
+    </header>
+
+    <div id="notice" class="notice"></div>
+
+    <div id="toolbar">
+      <button id="btn-scan" class="primary">Scan with AR</button>
+      <button id="btn-fit">Fit view</button>
+      <button id="btn-tape">Tape reference</button>
+      <button id="btn-delete" disabled>Delete point</button>
+      <button id="btn-del-shape" disabled>Delete shape</button>
+    </div>
+
+    <canvas id="plan"></canvas>
+
+    <section id="panel">
+      <div id="refs"></div>
+      <div class="row">
+        <label>Export units
+          <select id="units"><option value="m">metres</option><option value="mm">millimetres</option></select>
+        </label>
+        <label class="check"><input type="checkbox" id="edge-labels" checked> Edge length labels</label>
+      </div>
+      <div class="row">
+        <button id="btn-dxf" class="primary">Download DXF</button>
+        <button id="btn-save-json">Save project</button>
+        <button id="btn-load-json">Load project</button>
+        <button id="btn-clear" class="danger">Clear all</button>
+        <input type="file" id="file-json" accept=".json,application/json" hidden>
+      </div>
+    </section>
+  </div>
+
+  <div id="xr-canvas-host"></div>
+
+  <!-- AR controls, used as the WebXR DOM overlay -->
+  <div id="ar-overlay" style="display:none">
+    <div id="ar-top">
+      <select id="ar-layer"></select>
+      <button id="ar-exit">Done</button>
+    </div>
+    <div id="ar-toast"></div>
+    <div id="ar-info"></div>
+    <div id="ar-bottom">
+      <button id="ar-undo">Undo</button>
+      <button id="ar-trace">Trace: off</button>
+      <button id="ar-add" class="big">Add Point</button>
+      <button id="ar-finish">Finish</button>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
