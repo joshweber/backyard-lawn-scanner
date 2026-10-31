@@ -27,7 +27,8 @@ button.active { background: #ff9800; color: #000; }
 #ar-top { position: absolute; top: 10px; left: 10px; right: 10px; display: flex; gap: 8px; justify-content: space-between; }
 #ar-top select { flex: 1; min-width: 0; }
 #ar-info { position: absolute; left: 10px; right: 10px; bottom: 96px; padding: 6px 10px; border-radius: 8px; background: rgba(16,21,27,0.8); text-align: center; font-size: 13px; }
-#ar-toast { position: absolute; left: 10px; right: 10px; top: 70px; padding: 8px 10px; border-radius: 8px; background: rgba(30,111,224,0.9); text-align: center; opacity: 0; transition: opacity 0.3s; }
+#ar-tilt { display: none; position: absolute; top: 64px; left: 50%; transform: translateX(-50%); padding: 6px 16px; border-radius: 999px; color: #000; font-weight: 700; font-size: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.5); transition: background 0.15s; }
+#ar-toast { position: absolute; left: 10px; right: 10px; top: 108px; padding: 8px 10px; border-radius: 8px; background: rgba(30,111,224,0.9); text-align: center; opacity: 0; transition: opacity 0.3s; }
 #ar-bottom { position: absolute; left: 10px; right: 10px; bottom: 24px; display: flex; gap: 8px; align-items: stretch; }
 #ar-bottom button { flex: 1; padding: 14px 6px; }
 #ar-bottom button.big { flex: 2; background: #2e7d32; border-color: #2e7d32; font-weight: 600; }

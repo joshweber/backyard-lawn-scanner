@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {
   dist, polylineLength, polygonArea, douglasPeucker, simplifyAutoRuns,
   closeLoop, bestFitScale, scaleShapes, centroidOf, parseLength,
+  tiltFromStraightDown, tiltColour,
 } from '../geometry.js';
 import { buildDxf } from '../dxf-writer.js';
 import { parseProject } from '../storage.js';
@@ -72,6 +73,36 @@ test('parseLength units', () => {
   near(parseLength('36 ft'), 10.9728);
   assert.equal(parseLength('abc'), null);
   assert.equal(parseLength(''), null);
+});
+
+// Column-major pose matrix for a camera looking along the world vector `forward`.
+// Only m[8], m[9], m[10] (the camera's +Z axis = -forward) matter for the tilt calculation.
+function poseLooking(forward) {
+  const m = new Array(16).fill(0);
+  m[0] = 1; m[5] = 1; m[10] = 1; m[15] = 1;
+  m[8] = -forward[0]; m[9] = -forward[1]; m[10] = -forward[2];
+  return m;
+}
+
+test('tiltFromStraightDown', () => {
+  near(tiltFromStraightDown(poseLooking([0, -1, 0])), 0); // straight down, phone flat
+  near(tiltFromStraightDown(poseLooking([0, 0, -1])), 90); // at the horizon
+  const a = (30 * Math.PI) / 180;
+  near(tiltFromStraightDown(poseLooking([0, -Math.cos(a), -Math.sin(a)])), 30, 1e-6);
+  near(tiltFromStraightDown(poseLooking([0, 1, 0])), 180); // straight up
+});
+
+test('tiltColour green -> orange -> red', () => {
+  assert.equal(tiltColour(0), '#22c55e');
+  assert.equal(tiltColour(10), '#22c55e');
+  assert.equal(tiltColour(35), '#ff9800');
+  assert.equal(tiltColour(60), '#e53935');
+  assert.equal(tiltColour(90), '#e53935');
+  // halfway between green and orange is neither
+  const mid = tiltColour(25);
+  assert.notEqual(mid, '#22c55e');
+  assert.notEqual(mid, '#ff9800');
+  assert.match(mid, /^#[0-9a-f]{6}$/);
 });
 
 const project = {

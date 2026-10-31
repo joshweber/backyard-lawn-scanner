@@ -1,6 +1,8 @@
 // WebXR AR capture (Android Chrome + ARCore). Three.js is loaded lazily so the plan view
 // still works on desktop / unsupported browsers.
-import { dist, polylineLength, simplifyAutoRuns, closeLoop } from './geometry.js';
+import {
+  dist, polylineLength, simplifyAutoRuns, closeLoop, tiltFromStraightDown, tiltColour, TILT_WARN,
+} from './geometry.js';
 import { LAYERS, LAYER_ORDER } from './layers.js';
 
 const TRACE_STEP = 0.3; // metres between automatically traced points
@@ -65,6 +67,8 @@ export async function startAR({ overlay, onShape, onExit }) {
   let curY = 0;
   let savedCount = 0;
   let toastTimer = 0;
+  let tilt = null; // degrees away from pointing straight down, updated every frame
+  let lastTiltShown = -1;
 
   const toPlan = (m) => ({ x: m.elements[12], y: -m.elements[14] });
   const layerDef = () => LAYERS[layerSelect.value];
@@ -141,6 +145,7 @@ export async function startAR({ overlay, onShape, onExit }) {
       return toast('Saved, radius ' + r.toFixed(2) + ' m');
     }
     pts.push({ x: cur.x, y: cur.y, auto: false });
+    if (tilt !== null && tilt > TILT_WARN) toast(`Point added, but the phone is tilted ${Math.round(tilt)}°. Hold it flatter for accuracy`);
   }
 
   function finish() {
@@ -215,7 +220,30 @@ export async function startAR({ overlay, onShape, onExit }) {
   const viewerSpace = await session.requestReferenceSpace('viewer');
   hitSource = await session.requestHitTestSource({ space: viewerSpace });
 
+  const tiltEl = $('ar-tilt');
+
+  function updateTilt(frame) {
+    const viewer = frame.getViewerPose(renderer.xr.getReferenceSpace());
+    if (!viewer) {
+      tilt = null;
+      tiltEl.style.display = 'none';
+      lastTiltShown = -1;
+      return;
+    }
+    tilt = tiltFromStraightDown(viewer.transform.matrix);
+    const colour = tiltColour(tilt);
+    reticle.material.color.set(colour);
+    const shown = Math.round(tilt);
+    if (shown !== lastTiltShown) {
+      lastTiltShown = shown;
+      tiltEl.style.display = 'block';
+      tiltEl.style.background = colour;
+      tiltEl.textContent = `Tilt ${shown}°`;
+    }
+  }
+
   renderer.setAnimationLoop((time, frame) => {
+    if (frame) updateTilt(frame);
     if (frame && hitSource) {
       const results = frame.getHitTestResults(hitSource);
       const pose = results.length ? results[0].getPose(renderer.xr.getReferenceSpace()) : null;

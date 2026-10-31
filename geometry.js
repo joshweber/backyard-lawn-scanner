@@ -133,6 +133,40 @@ export function scaleShapes(shapes, factor, centre) {
   }
 }
 
+// Tilt of the phone camera away from pointing straight down, in degrees.
+// m is a column-major 4x4 pose matrix (WebXR / Three.js). The camera looks along its local -Z,
+// so world forward = -(m[8], m[9], m[10]) and its dot product with world down (0,-1,0) is m[9].
+// 0 = phone flat over the ground (screen up, camera down), 90 = camera pointing at the horizon.
+export function tiltFromStraightDown(m) {
+  const c = Math.max(-1, Math.min(1, m[9]));
+  return (Math.acos(c) * 180) / Math.PI;
+}
+
+export const TILT_GOOD = 15; // degrees: fully green at or below this
+export const TILT_WARN = 35; // degrees: orange
+export const TILT_BAD = 55; // degrees: fully red at or above this
+
+const lerp = (a, b, t) => Math.round(a + (b - a) * t);
+const hex = (r, g, b) => '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('');
+
+// Green -> orange -> red as the tilt increases. Returns a '#rrggbb' string.
+export function tiltColour(deg) {
+  const green = [0x22, 0xc5, 0x5e];
+  const orange = [0xff, 0x98, 0x00];
+  const red = [0xe5, 0x39, 0x35];
+  let a;
+  let b;
+  let t;
+  if (deg <= TILT_GOOD) return hex(...green);
+  if (deg >= TILT_BAD) return hex(...red);
+  if (deg <= TILT_WARN) {
+    a = green; b = orange; t = (deg - TILT_GOOD) / (TILT_WARN - TILT_GOOD);
+  } else {
+    a = orange; b = red; t = (deg - TILT_WARN) / (TILT_BAD - TILT_WARN);
+  }
+  return hex(lerp(a[0], b[0], t), lerp(a[1], b[1], t), lerp(a[2], b[2], t));
+}
+
 // Parse "11.02", "11,02 m", "1102 cm", "36 ft", "432 in", "11020mm" into metres. Returns null if invalid.
 export function parseLength(text) {
   const m = /^\s*([0-9]*[.,]?[0-9]+)\s*(mm|cm|m|ft|in)?\s*$/i.exec(text || '');
